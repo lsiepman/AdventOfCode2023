@@ -104,3 +104,41 @@ for i in seeds:
     values.append(val)
 
 print(f"Answer day 5 part 1: {min(values)}")
+
+# part 2 - reversing the search
+seeds_map = defaultdict(list)
+for idx in range(0, len(seeds), 2):
+    seeds_map["source"].append(seeds[idx])
+    seeds_map["range"].append(seeds[idx + 1])
+
+
+def check_seed_ranges(cur_val, d=seeds_map):
+    for i, j in zip(d["source"], d["range"]):
+        if cur_val >= i and cur_val <= (i + j):
+            return True
+
+
+def calc_prev_val(cur_val, d):
+    for i, j, k in zip(d["dest"], d["source"], d["range"]):
+        if cur_val >= i and cur_val <= (i + k):
+            diff = cur_val - i
+            prev_val = j + diff
+            break
+        else:
+            prev_val = cur_val
+
+    return prev_val
+
+
+# reverse order of maps
+all_maps.reverse()
+
+for num in range(1, min(values) + 1):
+    val = num
+    for d in all_maps:
+        val = calc_prev_val(val, d)
+
+    if check_seed_ranges(val):
+        break
+
+print(f"Answer day 5 part 2: {num}")
